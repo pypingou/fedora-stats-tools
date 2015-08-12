@@ -151,8 +151,11 @@ def parse_args():
         '--delta-in-days', dest='delta', type=int, default=210,
         help='Number of days to look back in the history')
     parser.add_argument(
-        '--category', default='fedoratagger',
+        '--category', default=None,
         help="fedmsg message category to query")
+    parser.add_argument(
+        '--topic', default=None,
+        help="fedmsg message topic to query")
     parser.add_argument(
         '--date-format', default='%m/%y',
         help="Datestring format for the graph.")
