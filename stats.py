@@ -79,6 +79,9 @@ def query(start, end, full=False, **kwargs):
 
 
 def graph(slug, category, date_format="%m/%y", open_when_done=False, **kwargs):
+
+    datatype = category or kwargs.get('topic')
+
     with open('csvs/' + slug + '.csv', 'r') as f:
         data = [map(float, line.strip().split(',')) for line in f.readlines()]
 
@@ -90,9 +93,9 @@ def graph(slug, category, date_format="%m/%y", open_when_done=False, **kwargs):
     yaxis = [item[1] for item in data]
 
     line_chart = pygal.Line()
-    line_chart.title = category
+    line_chart.title = datatype
     line_chart.x_labels = xaxis
-    line_chart.add(category, yaxis)
+    line_chart.add(datatype, yaxis)
 
     outfile = 'svgs/' + slug + '.svg'
     line_chart.render_to_file(outfile)
@@ -113,6 +116,7 @@ def daterange(start, stop, steps):
 
 
 def collect_stats(steps, delta, category, slug, **kwargs):
+
     stop = datetime.datetime.now()
     start = stop - delta
     datepairs = list(daterange(start, stop, steps))
@@ -124,7 +128,8 @@ def collect_stats(steps, delta, category, slug, **kwargs):
     progress = progressbar.ProgressBar()
 
     results = [
-        (time.mktime(j.timetuple()), query(i, j, category=[category]))
+        (time.mktime(j.timetuple()),
+         query(i, j, category=[category], topic=kwargs.get('topic')))
         for i, j in progress(datepairs)
     ]
 
